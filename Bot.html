@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Villa Plots - Virtual Assistant</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        premium: {
+                            dark: '#0f172a',
+                            panel: '#1e293b',
+                            gold: '#D4AF37',
+                            goldlight: '#F3E5AB'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #020617; }
+        
+        /* Hide scrollbar for chips and chat */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Smooth Message Entrance */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .msg-animate { animation: slideUp 0.4s ease-out forwards; }
+
+        /* Premium Mic Pulse */
+        .listening-pulse {
+            box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+            animation: pulse-gold 1.5s infinite;
+            background-color: #D4AF37 !important;
+            color: #0f172a !important;
+        }
+        @keyframes pulse-gold {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* Typing Dots */
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex items-center justify-center font-sans text-gray-200">
+
+    <!-- Main App Container -->
+    <div class="w-full max-w-md h-full sm:h-[90vh] bg-premium-dark sm:rounded-3xl shadow-[0_0_40px_rgba(212,175,55,0.1)] flex flex-col overflow-hidden border sm:border-premium-gold/30">
+        
+        <!-- Luxury Header -->
+        <div class="bg-premium-panel text-white p-5 flex items-center justify-between border-b border-premium-gold/20 z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-full border border-premium-gold flex items-center justify-center bg-premium-dark text-premium-gold shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+                    <i class="fa-solid fa-crown text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif font-semibold text-lg text-premium-gold tracking-wide">Project A</h1>
+                    <p class="text-xs text-gray-400 flex items-center gap-1.5 font-light">
+                        <span class="w-1.5 h-1.5 rounded-full bg-premium-gold animate-pulse"></span> Virtual Concierge
+                    </p>
+                </div>
+            </div>
+            <button onclick="toggleSound()" id="sound-toggle" class="text-premium-gold hover:text-white transition w-10 h-10 flex items-center justify-center">
+                <i class="fa-solid fa-volume-up text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Chat Area -->
+        <div id="chat-box" class="flex-1 overflow-y-auto p-5 space-y-5 flex flex-col hide-scrollbar bg-premium-dark">
+            <!-- Initial Greeting -->
+            <div class="max-w-[85%] p-4 rounded-2xl rounded-tl-sm bg-premium-panel border border-premium-gold/20 text-gray-200 self-start shadow-md msg-animate text-[15px] font-light leading-relaxed">
+                Welcome to <span class="text-premium-gold font-medium">Project A: Premium Villa Plots</span>. How may I assist you with details regarding our plot sizes, amenities, or ownership benefits today?
+            </div>
+        </div>
+
+        <!-- Quick Reply Chips -->
+        <div class="bg-premium-panel pt-3 px-4 pb-2 flex gap-2 overflow-x-auto hide-scrollbar border-t border-premium-gold/10">
+            <button onclick="handleUserInput('What is the project size and plot area?')" class="flex-shrink-0 text-xs border border-premium-gold/50 text-premium-gold px-4 py-2 rounded-full hover:bg-premium-gold hover:text-premium-dark transition font-medium">
+                Plot Sizes
+            </button>
+            <button onclick="handleUserInput('Tell me about the amenities and parks')" class="flex-shrink-0 text-xs border border-premium-gold/50 text-premium-gold px-4 py-2 rounded-full hover:bg-premium-gold hover:text-premium-dark transition font-medium">
+                Amenities
+            </button>
+            <button onclick="handleUserInput('What are the ownership details?')" class="flex-shrink-0 text-xs border border-premium-gold/50 text-premium-gold px-4 py-2 rounded-full hover:bg-premium-gold hover:text-premium-dark transition font-medium">
+                Ownership Perks
+            </button>
+        </div>
+
+        <!-- Input Area -->
+        <div class="bg-premium-panel p-4 pb-6 sm:pb-4 z-10">
+            <div class="flex items-center gap-2">
+                <button id="mic-btn" class="w-12 h-12 rounded-full border border-premium-gold/50 text-premium-gold flex items-center justify-center flex-shrink-0 hover:bg-premium-gold/10 transition duration-300 focus:outline-none">
+                    <i class="fa-solid fa-microphone text-lg"></i>
+                </button>
+                <div class="flex-1 bg-premium-dark rounded-full flex items-center px-4 py-2.5 border border-premium-gold/30 focus-within:border-premium-gold transition">
+                    <input type="text" id="text-input" placeholder="Ask about Project A..." class="bg-transparent w-full focus:outline-none text-white text-sm py-1 placeholder-gray-500 font-light">
+                </div>
+                <button id="send-btn" class="w-12 h-12 rounded-full bg-premium-gold text-premium-dark hover:bg-premium-goldlight flex items-center justify-center flex-shrink-0 transition shadow-[0_0_15px_rgba(212,175,55,0.3)] focus:outline-none">
+                    <i class="fa-solid fa-paper-plane text-lg ml-[-2px]"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DOM Elements & State ---
+        const chatBox = document.getElementById('chat-box');
+        const textInput = document.getElementById('text-input');
+        const sendBtn = document.getElementById('send-btn');
+        const micBtn = document.getElementById('mic-btn');
+        const soundToggle = document.getElementById('sound-toggle');
+        
+        let soundEnabled = true;
+
+        // --- 2. Custom NLP / Knowledge Base Engine ---
+        // This array maps regex keywords to exact assignment details.
+        const knowledgeBase = [
+            {
+                pattern: /(size|area|acre|plot|yard|sq|how big|dimension|space)/i,
+                response: "This is a gated residential development spread across approximately 25 acres. It offers more than 100 premium villa plots ranging from 267 to 597 square yards."
+            },
+            {
+                pattern: /(amenit|feature|park|play|sport|green|landscape|track|court|skat|amphitheatre|gazebo|meditation)/i,
+                response: "Key features include jogging and cycling tracks, tennis and badminton courts, a skating rink, children's play area, amphitheatre, gazebo, meditation plaza, four parks, and approximately 50% green and open landscape."
+            },
+            {
+                pattern: /(own|freehold|club|school|hospital|educat|health|securit|infrastruct|perk|benefit|facilit)/i,
+                response: "The project offers freehold ownership and complimentary access to the township club. You also benefit from proximity to educational and healthcare facilities, and full access to the township's security and infrastructure systems."
+            },
+            {
+                pattern: /(hi|hello|hey|start|morning|evening|afternoon)/i,
+                response: "Welcome! I am the virtual concierge for Project A. I can assist you with details regarding plot sizes, exclusive amenities, and ownership benefits. What would you like to explore?"
+            }
+        ];
+
+        // Match user input against regex patterns
+        function getBotResponse(input) {
+            for (let item of knowledgeBase) {
+                if (item.pattern.test(input)) {
+                    return item.response;
+                }
+            }
+            // Fallback for unmatched queries
+            return "I apologize, but my expertise is exclusively focused on Project A: Premium Villa Plots. I can provide details about our plot sizes, amenities, or ownership. Which of these interests you?";
+        }
+
+        // --- 3. UI Helpers ---
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            if (soundEnabled) {
+                soundToggle.innerHTML = '<i class="fa-solid fa-volume-up text-lg"></i>';
+            } else {
+                window.speechSynthesis.cancel();
+                soundToggle.innerHTML = '<i class="fa-solid fa-volume-mute text-lg"></i>';
+            }
+        }
+
+        function speakText(text) {
+            if (!soundEnabled) return;
+            window.speechSynthesis.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-IN';
+            utterance.rate = 0.95; // Slightly slower for premium feel
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function addMessage(text, isBot = false) {
+            const msgDiv = document.createElement('div');
+            
+            if (isBot) {
+                msgDiv.className = 'max-w-[85%] p-4 rounded-2xl rounded-tl-sm bg-premium-panel border border-premium-gold/20 text-gray-200 self-start shadow-md msg-animate text-[15px] font-light leading-relaxed';
+                msgDiv.innerHTML = text;
+            } else {
+                msgDiv.className = 'max-w-[85%] p-3 px-5 rounded-2xl rounded-tr-sm bg-gradient-to-r from-premium-gold to-[#B5952F] text-premium-dark font-medium self-end shadow-lg msg-animate text-[15px]';
+                msgDiv.innerText = text;
+            }
+            
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // --- 4. Core Logic (Simulating human delay) ---
+        async function handleUserInput(text) {
+            if (!text.trim()) return;
+            
+            textInput.value = '';
+            addMessage(text, false); // Add user msg
+
+            // Show Typing Indicator
+            const typingId = 'typing-' + Date.now();
+            const typingDiv = document.createElement('div');
+            typingDiv.id = typingId;
+            typingDiv.className = 'max-w-[85%] p-4 rounded-2xl rounded-tl-sm bg-premium-panel border border-premium-gold/20 self-start shadow-md msg-animate flex items-center gap-1.5';
+            typingDiv.innerHTML = `
+                <div class="w-2 h-2 bg-premium-gold rounded-full typing-dot"></div>
+                <div class="w-2 h-2 bg-premium-gold rounded-full typing-dot"></div>
+                <div class="w-2 h-2 bg-premium-gold rounded-full typing-dot"></div>
+            `;
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Generate answer via NLP function
+            const responseText = getBotResponse(text);
+
+            // Simulate network/thinking delay (600ms to 1200ms)
+            const delay = Math.floor(Math.random() * 600) + 600;
+            
+            setTimeout(() => {
+                const typingEl = document.getElementById(typingId);
+                if(typingEl) typingEl.remove();
+                
+                addMessage(responseText, true);
+                speakText(responseText);
+            }, delay);
+        }
+
+        // --- 5. Event Listeners ---
+        sendBtn.addEventListener('click', () => handleUserInput(textInput.value));
+        textInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleUserInput(textInput.value);
+        });
+
+        // --- 6. Web Speech API (Voice Input) ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-IN';
+
+            recognition.onstart = () => {
+                micBtn.classList.add('listening-pulse');
+                textInput.placeholder = "Listening...";
+                window.speechSynthesis.cancel(); 
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                textInput.value = transcript;
+                handleUserInput(transcript);
+            };
+
+            recognition.onerror = (event) => {
+                resetMicUI();
+                if (event.error !== 'no-speech') {
+                    addMessage("I couldn't quite catch that. Could you please try again or use the text input?", true);
+                }
+            };
+
+            recognition.onend = () => resetMicUI();
+        } else {
+            micBtn.onclick = () => addMessage("Voice recognition is not supported in this browser.", true);
+        }
+
+        function resetMicUI() {
+            micBtn.classList.remove('listening-pulse');
+            textInput.placeholder = "Ask about Project A...";
+        }
+
+        if (recognition) {
+            micBtn.addEventListener('click', () => {
+                try { recognition.start(); } catch(e) {}
+            });
+        }
+    </script>
+</body>
+</html>
